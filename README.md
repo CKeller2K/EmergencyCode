@@ -3,7 +3,7 @@ Group Emergency Code
 
 Members:
 - Cole Keller
-- Shayn uhhh
+- Shayn uhhh       (voonshayn@gmail.com)
 - Mari uhhh
 - Kenny uhh        (KennyYang519@gmail.com)
 - Hassan uhhhhh    (haadhassan123@gmail.com)
