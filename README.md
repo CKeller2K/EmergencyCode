@@ -2,12 +2,12 @@ CSC 131 Group Project Fall 2023
 Group Emergency Code
 
 Members:
-Cole Keller
-Shayn uhhh
-Mari uhhh
-Kenny uhh        (KennyYang519@gmail.com)
-Hassan uhhhhh    (haadhassan123@gmail.com)
-James Crandall   (jamesgarycrandall@gmail.com)
+- Cole Keller
+- Shayn uhhh
+- Mari uhhh
+- Kenny uhh        (KennyYang519@gmail.com)
+- Hassan uhhhhh    (haadhassan123@gmail.com)
+- James Crandall   (jamesgarycrandall@gmail.com)
 
 Made this file to keep a rough log of our current backlog.
 
@@ -42,7 +42,7 @@ General Backlog:
 - learn github, nodejs, firebase, sendgrid, pdfkit
 - create various test documents
 - create various test templates
-✔️ load data off firestore
+- ✔️ load data off firestore
 - send pdf attachment via sendgrid
 - send completed file to bucket
 
@@ -58,6 +58,7 @@ Week 1:
 - create sub-groups with smaller scopes (?)
 - make super basic document
 - make super basic template (?)
+  
 Week 2:
 - generate pdf with test info
 - send pdf via email to presenter
