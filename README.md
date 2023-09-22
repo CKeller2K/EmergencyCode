@@ -2,12 +2,12 @@ CSC 131 Group Project Fall 2023
 Group Emergency Code
 
 Members:
-- Cole Keller
-- Shayn uhhh       (voonshayn@gmail.com)
-- Mari uhhh
-- Kenny uhh        (KennyYang519@gmail.com)
-- Hassan uhhhhh    (haadhassan123@gmail.com)
-- James Crandall   (jamesgarycrandall@gmail.com)
+- Cole          (colekellerwork@gmail.com)
+- Shayn         (voonshayn@gmail.com)
+- Mari          (Mariammoslehi@csus.edu)
+- Kenny         (KennyYang519@gmail.com)
+- Hassan        (haadhassan123@gmail.com)
+- James         (jamesgarycrandall@gmail.com)
 
 Made this file to keep a rough log of our current backlog.
 
