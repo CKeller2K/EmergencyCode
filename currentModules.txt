@@ -1,0 +1,8 @@
+currently "npm install"'d modules for my current working code -Cole
+  @Google-cloud/storage
+  pdfkit
+  firebase-admin
+  @google-cloud/firestore
+  latex
+  @sendgrid/mail
+your currently installed list can be found with the terminal command 'npm list'
