@@ -99,7 +99,7 @@ collectionRef.onSnapshot((snapshot) => {
 
 
     //updates document with processed key and sets to true (creates key if not found)
-    change.doc.ref.update({processed: true, timeProcessed: firebase.firestore.Timestamp.now()});
+    //change.doc.ref.update({processed: true, timeProcessed: firebase.firestore.Timestamp.now()});
 
 
     //TODO delete local file after sending to right places
