@@ -13,8 +13,6 @@
 require("dotenv").config();
 // create .env file with email credentials EMAIL= , PASSWORD= . DOTENV can hold other passwords and credentials too
 
-const { initializeApp } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
 const serviceAccount = require("./ServiceAccountKey.json");
 const admin = require("firebase-admin");
 const latex = require("latex");
@@ -114,6 +112,92 @@ exports.createPdf = functions.firestore
     }
   });
 
+  exports.updatePdf = functions.firestore
+  .document("coleTest/{docId}")
+  .onUpdate(async (change, context) => {
+    // change.after.data() gives data of the document after the update
+    const data = change.after.data();
+    // change.before.data() gives data of the document before the update
+    const previousData = change.before.data();
+    if (data.state === "create" && previousData.state !== "create") {
+      // Code to create PDF goes here
+      const latex = data.latex; // Assuming the LaTeX document is stored in a 'latex' field
+
+      // Compile the LaTeX document
+      exec(`echo "${latex}" | pdflatex`, (error, stdout, stderr) => {
+        if (error) {
+          console.error("exec error: ${error}");
+          return;
+        }
+
+        // Save the PDF to Firebase Storage
+        const storage = require('@google-cloud/storage')();
+        // Storage bucket "pdf-json-buckets"
+        const bucket = storage.bucket('pdf-json-buckets');
+        // PDF uses unique Document ID as its name 
+        const file = bucket.file('${context.params.docId}.pdf');
+        // saves object into the bucket
+        file.createWriteStream()
+          // informs if error has occured
+          .on('error', (err) => {
+            console.error(err);
+          })
+          // successfully saves pdf into file
+          .on('finish', async () => {
+            console.log('PDF saved to Firebase Storage.');
+
+            // Update the 'state' field of the specific document to "processed"
+            const docRef = admin.firestore().doc(`my-collection/${context.params.docId}`);
+            await docRef.update({ state: "processed" });
+          })
+          // marks end of writable stream
+          .end(stdout);
+      });
+    
+      
+
+    } 
+    else if (state === "processed"){
+      // code to send email
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          // uses dotenv npm to hide credentials
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD
+        }
+      });
+      // reads email address if stored in a "client_email field"
+      const client_email = data.client_email; 
+
+      const mailOptions = {
+        from: "csc131project@gmail.com",
+        to: client_email,
+        subject: "PDF Creation Completed",
+        text: "The PDF creation process is complete.",
+        attachments: [
+          {
+            filename: `${context.params.docId}.pdf`,
+            path: "gs://pdf-json-buckets/${context.params.docId}.pdf",
+            contentType: "application/pdf"
+          }
+        ]
+
+      };
+      
+      // send email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("Error occurred. " + error.message);
+        }
+        console.log("Email sent: " + info.response);
+      });
+      
+      // updates the state to completed
+      const docRef = admin.firestore().doc(`my-collection/${context.params.docId}`);
+      await docRef.update({ state: "completed" });
+    }
+  });
 
 
 
