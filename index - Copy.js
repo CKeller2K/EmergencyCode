@@ -107,6 +107,10 @@ exports.createPdf = functions.firestore
         }
         console.log("Email sent: " + info.response);
       });
+      
+      // updates the state to completed
+      const docRef = admin.firestore().doc(`my-collection/${context.params.docId}`);
+      await docRef.update({ state: "completed" });
     }
   });
 
