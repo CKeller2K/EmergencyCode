@@ -37,14 +37,27 @@ Project Outline:
 ------------------------------------------------------------------------------------------
 
 General Backlog:
-- understand the project
-- split work accordingly
-- learn github, nodejs, firebase, sendgrid, pdfkit
-- create various test documents
+- ✔️ understand the project
+- ❌ split work accordingly
+- ✔️ learn github, nodejs, firebase, sendgrid, pdfkit
+- ✔️ create various test documents
 - create various test templates
 - ✔️ load data off firestore
-- send pdf attachment via sendgrid
-- send completed file to bucket
+- ✔️ send pdf attachment via sendgrid
+- ✔️ send completed file to bucket
+
+- [necessary] update template modification to take template from cloud
+- [necessary] put template on cloud
+- [necessary] save template to appropriate cloud functions local directory (?)
+- [necessary] handle template getting through firestore doc
+- [necessary] update firestore documents to have metadata map: include template, options (ie whether or not to send email), status, and errors
+- [necessary] onupdate function should trigger on template variable update
+- [preferable] update status for each stage: get template, add values, save pdf, save to bucket, send email, complete
+- on error stop code, leaving status as the stage it error'd
+- save error message to firestore doc
+- [necessary] clear bucket of unrelated files for demo #2
+- [necessary] create ideal input firestore doc for demo #2
+- [optional] clear recieving email of test emails for demo #2
 
 -----------------------------------------------------
 
@@ -64,6 +77,16 @@ Week 2:
 - send pdf via email to presenter
 - mark document as processed in firestore
 
+
+#2 (uhh - 10/17):
+Week 1:
+- ???
+
+Week 2:
+- mash together code
+- start deliverable #2
+- prepare presentation notes
+- make sure code is compatible with cloud functions
 
 
 
