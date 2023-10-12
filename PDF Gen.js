@@ -8,8 +8,8 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-const collectionRef = db.collection('kennyTest');
-const documentRef= collectionRef.doc('1');
+const collectionRef = db.collection('coleTest');
+const documentRef= collectionRef.doc('97025378921');
 
 // Define file paths
 const texFilePath = 'template.tex';
@@ -37,11 +37,37 @@ documentRef
 .then((doc) => {
   if(doc.exists) {
     const data = doc.data();
-    const newContent1 = data.name;
-    const newContent2 = data.age;
+    const dataArray1 = doc.data().items['0'];
+    const dataArray2 = doc.data().items['1'];
+    const dataArray3 = doc.data().items['2'];
 
-    let modifiedData = originalData.replace('<<dataPoint1>>', newContent1);
-    modifiedData = modifiedData.replace('<<dataPoint2>>', newContent2);
+    let modifiedData = originalData.replace('<<customerName>>', data.client_name);
+    modifiedData = modifiedData.replace('<<customerPhone>>', 'N/A');
+    modifiedData = modifiedData.replace('<<customerAddress>>', data.client_address);
+    modifiedData = modifiedData.replace('<<customerEmail>>', data.client_email);
+
+    modifiedData = modifiedData.replace('<<companyName>>', data.host_name);
+    modifiedData = modifiedData.replace('<<companyPhone>>', 'N/A');
+    modifiedData = modifiedData.replace('<<companyAddress>>', data.host_location);
+    modifiedData = modifiedData.replace('<<companyEmail>>', 'N/A');
+
+    modifiedData = modifiedData.replace('<<invoiceNumber>>', 'N/A');
+   modifiedData = modifiedData.replace('<<subTotal>>' , data.order_subtotal);
+    modifiedData = modifiedData.replace('<<taxAmount>>' , data.order_tax);
+    modifiedData = modifiedData.replace('<<totalAmount>>' , data.order_total);
+    
+    modifiedData = modifiedData.replace('<<product1Name>>' , dataArray1.name)
+    modifiedData = modifiedData.replace('<<product1Cost>>' , dataArray1.cost)
+    modifiedData = modifiedData.replace('<<product1Amount>>' , dataArray1.count)
+
+    modifiedData = modifiedData.replace('<<product2Name>>' , dataArray2.name)
+    modifiedData = modifiedData.replace('<<product2Cost>>' , dataArray2.cost)
+    modifiedData = modifiedData.replace('<<product2Amount>>' , dataArray2.count)
+
+    modifiedData = modifiedData.replace('<<product3Name>>' , dataArray3.name)
+    modifiedData = modifiedData.replace('<<product3Cost>>' , dataArray3.cost)
+    modifiedData = modifiedData.replace('<<product3Amount>>' , dataArray3.count)
+
 
     fs.writeFile(texFilePath, modifiedData, 'utf8', (err) => {
       if(err) {
@@ -54,7 +80,7 @@ documentRef
       const options = { inputs: ['.', 'TeXworks'] };
       const pdf = latex(modifiedData, options);
 
-      pdf.pipe(fs.createWriteStream('output.pdf'));
+      pdf.pipe(fs.createWriteStream('Order_Sample.pdf'));
       pdf.on('finish',() => {
         console.log('PDF generated successfully.');
         resetTexFile();
@@ -87,5 +113,3 @@ function resetTexFile() {
     });
   });
 }
-
-// Call resetTexFile() to reset the TeX file to its original content
