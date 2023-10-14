@@ -1,7 +1,4 @@
-//require("dotenv").config();
-// create .env file with email credentials EMAIL= , PASSWORD= . DOTENV can hold other passwords and credentials too
-
-//const serviceAccount = require("../ServiceAccountKey.json");
+require("dotenv").config();
 //const admin = require("firebase-admin");
 const storage = require('@google-cloud/storage')();
 const latex = require("node-latex");
@@ -10,19 +7,18 @@ const nodemailer = require("nodemailer");
 //const sendGrid = require("sendGrid");
 const functions = require("firebase-functions");
 
-//admin.initializeApp({
-  //credential: admin.credential.cert(serviceAccount)
-//});
-
 //save collection name and in / out buckets
-const collectionName = "coleTest";
-const inBucketName = "pdf-json-buckets";
-const outBucketName = '131project-processed-pdfs';
+const collectionName = process.env.COLLECTION;
+const inBucketName = process.env.INBUCKET;
+const outBucketName = process.env.OUTBUCKET;
 
 
 
 /*
 COLE UPDATE COMMENTS:
+
+obviously code only currently works on documents that have the exact data as coleTest/97025378921
+either make doc same as that, or work on onUpdate so that doc can be used in demo
 
 
 
@@ -74,29 +70,6 @@ not sure if it'll trigger mid run and infinitely + recursively run itself!
 also onCreate export might trigger onUpdate export due to using .update() itself!
 NEED more checks like this (from first if statement in onUpdate):
 "data.state === "create" && previousData.state !== "create""
-
-
-
-
-outFile.createWriteStream()
-  // informs if error has occured
-  .on('error', (err) => {
-    console.error(err);
-  })
-  // successfully saves pdf into file
-  .on('finish', async () => {
-    console.log('PDF saved to Firebase Storage.');
-
-    // Update the 'state' field of the specific document to "processed"
-    await docRef.update({ state: "processed" });
-  })
-  // marks end of writable stream
-  .end(stdout);
-
-I've updated this code to use current variables, but i dont' think this does anything?
-outfile.createwritestream just opens a filestream with attribute write to the outFile object (opened in correct bucket path)
-don't think it implicitly writes data
-.upload is a storage function as well, which should work similar to .download, which is used here
 */
 
 
@@ -110,7 +83,6 @@ don't think it implicitly writes data
 exports.createDoc = functions.firestore
   //{docId} DOES NOT NEED A '$', THIS IS A VARIABLE HANDLED BY CLOUD FUNCTIONS; docId IS THE DOC THAT IS CHANGED
   .document(`${collectionName}/{docId}`)
-
   //parameters snap and context are doc 'snapshot' and backend 'context' respectively
   .onCreate(async (snap, context) => {  //watch out, cloud functions often return promises
 
@@ -121,38 +93,82 @@ exports.createDoc = functions.firestore
     //EXPECTED NEW DOCS DO NOT PROCESS UNLESS STATE == 'CREATE'
     if (data.state === "create") {
       // load in / out bucket objects
-      let inBucket = storage.bucket(inBucketName);
-      let outBucket = storage.bucket(outBucketName);
-      // specify template file using template data; TODO figure out error handling for file not exist
-      let inFile = inBucket.file(`${data.template}.tex`); //TODO template should include file extension; currently hardcoded as .tex
-      //specify output pdf as firebase doc name
-      let outFile = outBucket.file(`${context.params.docId}.pdf`);
+      const inBucket = storage.bucket(inBucketName);
+      const outBucket = storage.bucket(outBucketName);
+      // local / temporary file paths
+      const inFilePath = `./tmp/${context.params.docId}.tex`;
+      const outFilePath = `./tmp/${context.params.docId}.pdf`;
+      // specify template file IN BUCKET using template data; TODO figure out error handling for file not exist
+      const inFile = inBucket.file(`${data.template}.tex`); //TODO template should include file extension; currently hardcoded as .tex
 
       //get template from bucket    CURRENTLY UNTESTED, ALSO TRY STORAGE.READFILE() STUFF
       await inFile.download({
-        destination: `./tmp/${context.params.docId}.tex`
+        destination: inFilePath
       }, function(err) {
         console.log(`Error downloading template: ${err}`);
       }); //use .then(function(){}) ?
 
-      //add kenny code to process, expects tex file exists in /tmp/ subdirectory; after done, pdf expected in /tmp/ subdirectory
+      //kenny code to process, expects tex file exists in /tmp/ subdirectory; after done, pdf expected in /tmp/ subdirectory
+      await fs.readFile(inFilePath, 'utf8', (err, originalData) => {
+        if (err) {
+          console.error('Error reading LaTeX file:', err);
+          return;
+        }
+      
+        const itemMap0 = data.items[0];
+        const itemMap1 = data.items[1];
+        const itemMap2 = data.items[2];
+    
+        let modifiedData = originalData;
+        modifiedData = modifiedData.replace('<<customerName>>', data.client_name);
+        modifiedData = modifiedData.replace('<<customerPhone>>', 'N/A');
+        modifiedData = modifiedData.replace('<<customerAddress>>', data.client_address);
+        modifiedData = modifiedData.replace('<<customerEmail>>', data.client_email);
+    
+        modifiedData = modifiedData.replace('<<companyName>>', data.host_name);
+        modifiedData = modifiedData.replace('<<companyPhone>>', 'N/A');
+        modifiedData = modifiedData.replace('<<companyAddress>>', data.host_location);
+        modifiedData = modifiedData.replace('<<companyEmail>>', 'N/A');
+    
+        modifiedData = modifiedData.replace('<<invoiceNumber>>', 'N/A');
+        modifiedData = modifiedData.replace('<<subTotal>>' , data.order_subtotal);
+        modifiedData = modifiedData.replace('<<taxAmount>>' , data.order_tax);
+        modifiedData = modifiedData.replace('<<totalAmount>>' , data.order_total);
+        
+        modifiedData = modifiedData.replace('<<product1Name>>' , itemMap0.name)
+        modifiedData = modifiedData.replace('<<product1Cost>>' , itemMap0.cost)
+        modifiedData = modifiedData.replace('<<product1Amount>>' , itemMap0.count)
+    
+        modifiedData = modifiedData.replace('<<product2Name>>' , itemMap1.name)
+        modifiedData = modifiedData.replace('<<product2Cost>>' , itemMap1.cost)
+        modifiedData = modifiedData.replace('<<product2Amount>>' , itemMap1.count)
+    
+        modifiedData = modifiedData.replace('<<product3Name>>' , itemMap2.name)
+        modifiedData = modifiedData.replace('<<product3Cost>>' , itemMap2.cost)
+        modifiedData = modifiedData.replace('<<product3Amount>>' , itemMap2.count)
+    
+          
+        console.log('Template modified with doc data.');
+  
+        const options = { inputs: ['.', 'TeXworks'] };
+        const outPDF = latex(modifiedData, options);
+  
+        outPDF.pipe(fs.createWriteStream(outFilePath));
+        outPDF.on('finish',() => {
+          console.log('PDF generated successfully.');
+        });
+      }).catch((error) => {
+        console.error('Error getting document', error);
+      });
 
 
-      // saves pdf into the bucket
-      await outFile.createWriteStream()
-        // informs if error has occured
-        .on('error', (err) => {
-          console.error(err);
-        })
-        // successfully saves pdf into file
-        .on('finish', async () => {
-          console.log('PDF saved to Firebase Storage.');
+      //upload finished pdf to processed bucket
+      let uploading = await outBucket.upload(outFilePath);
+      if (uploading.err) console.log(`Error uploading PDF: ${uploading.err}`);
+      else console.log(`File uploaded: ${context.params.docId}.pdf`);
 
-          // Update the 'state' field of the specific document to "processed"
-          await docRef.update({ state: "processed" });
-        })
-        // marks end of writable stream
-        .end(stdout);
+      await docRef.update({ state: "processed" });
+
       } else {
         // STATE NOT CREATE: DOC WRITER DID NOT WANT FILE TO BE INITIALLY PROCESSED; SEND PDF NOT HANLDED THROUGH FIRESTORE DOC
       }
@@ -201,7 +217,7 @@ exports.createDoc = functions.firestore
       } else {
         //STATE NOT PROCESSED, UPDATE DOC WITH ERROR + STATE AS ERROR AT PROCESS
       }
-      //REGARDLESS OF DOC STATUS, NEED TO RETURN PROMISE HERE? FOR NOW IS NULL
+      //regardless of status return something? promises, how do those work?
       return null;
   });
 
@@ -228,43 +244,87 @@ exports.createDoc = functions.firestore
     //only triggers if state flag in firestore doc is modified to 'create'; ie the change/update is state updating
     if (data.state === "create" && previousData.state !== "create") {
       // prep storage bucket objects
-      let inBucket = storage.bucket(inBucketName);
-      let outBucket = storage.bucket(outBucketName);
-      // PDF uses unique Document ID as its name 
-      let inFile = inBucket.file(`${data.template}.tex`); //see TODO's in onCreate implementation
-      //specify output pdf as firebase doc name
-      let outFile = outBucket.file(`${context.params.docId}.pdf`);
+      const inBucket = storage.bucket(inBucketName);
+      const outBucket = storage.bucket(outBucketName);
+      // local / temporary file paths
+      const inFilePath = `./tmp/${context.params.docId}.tex`;
+      const outFilePath = `./tmp/${context.params.docId}.pdf`;
+      // specify template file IN BUCKET using template data; TODO figure out error handling for file not exist
+      const inFile = inBucket.file(`${data.template}.tex`); //TODO template should include file extension; currently hardcoded as .tex
 
       //get template from bucket; same as onCreate: see notes there
       await inFile.download({
-        destination: `./tmp/${context.params.docId}.tex`
+        destination: inFilePath
       }, function(err) {
         console.log(`Error downloading template: ${err}`);
       });
 
-      // put kenny code here
+      //kenny code to process, expects tex file exists in /tmp/ subdirectory; after done, pdf expected in /tmp/ subdirectory
+      await fs.readFile(inFilePath, 'utf8', (err, originalData) => {
+        if (err) {
+          console.error('Error reading LaTeX file:', err);
+          return;
+        }
+      
+        const itemMap0 = data.items[0];
+        const itemMap1 = data.items[1];
+        const itemMap2 = data.items[2];
+    
+        let modifiedData = originalData;
+        modifiedData = modifiedData.replace('<<customerName>>', data.client_name);
+        modifiedData = modifiedData.replace('<<customerPhone>>', 'N/A');
+        modifiedData = modifiedData.replace('<<customerAddress>>', data.client_address);
+        modifiedData = modifiedData.replace('<<customerEmail>>', data.client_email);
+    
+        modifiedData = modifiedData.replace('<<companyName>>', data.host_name);
+        modifiedData = modifiedData.replace('<<companyPhone>>', 'N/A');
+        modifiedData = modifiedData.replace('<<companyAddress>>', data.host_location);
+        modifiedData = modifiedData.replace('<<companyEmail>>', 'N/A');
+    
+        modifiedData = modifiedData.replace('<<invoiceNumber>>', 'N/A');
+        modifiedData = modifiedData.replace('<<subTotal>>' , data.order_subtotal);
+        modifiedData = modifiedData.replace('<<taxAmount>>' , data.order_tax);
+        modifiedData = modifiedData.replace('<<totalAmount>>' , data.order_total);
+        
+        modifiedData = modifiedData.replace('<<product1Name>>' , itemMap0.name)
+        modifiedData = modifiedData.replace('<<product1Cost>>' , itemMap0.cost)
+        modifiedData = modifiedData.replace('<<product1Amount>>' , itemMap0.count)
+    
+        modifiedData = modifiedData.replace('<<product2Name>>' , itemMap1.name)
+        modifiedData = modifiedData.replace('<<product2Cost>>' , itemMap1.cost)
+        modifiedData = modifiedData.replace('<<product2Amount>>' , itemMap1.count)
+    
+        modifiedData = modifiedData.replace('<<product3Name>>' , itemMap2.name)
+        modifiedData = modifiedData.replace('<<product3Cost>>' , itemMap2.cost)
+        modifiedData = modifiedData.replace('<<product3Amount>>' , itemMap2.count)
+    
+          
+        console.log('Template modified with doc data.');
+  
+        const options = { inputs: ['.', 'TeXworks'] };
+        const outPDF = latex(modifiedData, options);
+  
+        outPDF.pipe(fs.createWriteStream(outFilePath));
+        outPDF.on('finish',() => {
+          console.log('PDF generated successfully.');
+        });
+      }).catch((error) => {
+        console.error('Error getting document', error);
+      });
 
+      //upload finished pdf to processed bucket
+      let uploading = await outBucket.upload(outFilePath);
+      if (uploading.err) console.log(`Error uploading PDF: ${uploading.err}`);
+      else console.log(`File uploaded: ${context.params.docId}.pdf`);
 
-      // saves pdf into 'processed' bucket
-      await outFile.createWriteStream()
-        // informs if error has occured
-        .on('error', (err) => {
-          console.error(err);
-        })
-        // successfully saves pdf into file
-        .on('finish', async () => {
-          console.log('PDF saved to Firebase Storage.');
-          // Update the 'state' field of the specific document to "processed"
-          await docRef.update({ state: "processed" });
-        })
-        // marks end of writable stream
-        .end(stdout);
+      await docRef.update({ state: "processed" });
+
     } else {
       //state anything other than create; dunno what go here
     }
 
     //do not manually (through firestore writing) update docs' state to processed, unknown outcome
-    if (state === "processed"){
+    if (data.state === "processed" && previousData.state !== "processed"){
       // code to send email
       const transporter = nodemailer.createTransport({
         service: "gmail",
