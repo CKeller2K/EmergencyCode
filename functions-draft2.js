@@ -24,6 +24,21 @@ const outBucketName = '131project-processed-pdfs';
 /*
 COLE UPDATE COMMENTS:
 
+
+
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+code not tested AT ALL, but this might be unnecessary.
+we need this to run code locally since we need to certify our code is being run by a project admin
+but functions are being run by the project itself, and are assumed to be admin access
+(functions are uploaded if you log in through cloud sdk which ensures code is made by a project admin)
+also functions directory will not contain a serviceaccount key data file!!
+
+
+
 "Compile the LaTeX document"
 exec(`echo "${latex}" | pdflatex`, (error, stdout, stderr) => {
   if (error) {
@@ -40,6 +55,7 @@ this code runs echo in dir terminal instance- a windows equivalent to cat which 
 "uses dotenv npm to hide credentials"
 
 can you? firestore holds the code after emulator launch, and idk how to save env file to firestore's directory
+related: commented require line, BUT DID NOT UPDATE EMAIL CODE, DUNO HOW IT WORKS
 
 
 
