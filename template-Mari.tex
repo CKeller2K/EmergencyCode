@@ -1,0 +1,96 @@
+\documentclass{article}
+\usepackage[a4paper, margin=1in, left=0.5in]{geometry}  % Adjusted left margin
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{setspace}
+
+% Change the font to Times New Roman
+\renewcommand{\familydefault}{ptm}
+
+% Define customer and company information
+\newcommand{\customerName}{{CustomerName}}
+\newcommand{\customerPhone}{{CustomerPhone}}
+\newcommand{\customerAddress}{{CustomerAddress}}
+\newcommand{\customerEmail}{{CustomerEmail}}
+
+\newcommand{\companyName}{{CompanyName}}
+\newcommand{\companyPhone}{{CompanyPhone}}
+\newcommand{\companyAddress}{{CompanyAddress}}   
+\newcommand{\companyEmail}{{CompanyEmail}}
+
+% Define product information using a command
+\newcommand{\product}[4]{%
+#1 & #2 & \$$#3$ & #4 & \$$#2 \times #3$ \\
+}
+
+\newcommand{\invoiceNumber}{{InvoiceNumber}}
+\newcommand{\invoiceDate}{{\today}}
+\newcommand{\dueDate}{{\today}}
+\newcommand{\reference}{{Reference}}
+
+\begin{document}
+\begin{minipage}[t]{0.25\textwidth}
+    \vspace{0pt}
+ %   \includegraphics[width=3cm]{aasd.jpg}  % Adjusted logo width
+    \companyAddress \\
+    \companyPhone \\
+    \companyEmail
+\end{minipage}%
+\begin{minipage}[t]{0.75\textwidth}
+    \vspace{0pt}
+    \begin{flushright}
+        \textbf{\LARGE Invoice}\\[10pt] % Adjusted size
+        \textbf{Invoice Number:} \invoiceNumber \\
+        \textbf{Invoice Date:} \invoiceDate \\
+        \textbf{Due Date:} \dueDate \\
+        \textbf{Reference:} \reference
+    </end{flushright}
+\end{minipage}
+
+\vspace{1cm}
+
+\noindent
+\textbf{Bill To:}\\
+\textbf{Name:} \customerName \\
+\textbf{Phone:} \customerPhone \\
+\textbf{Address:} \customerAddress \\
+\textbf{Email:} \customerEmail
+
+\vspace{1cm}
+
+\textbf{Invoice Details:}
+
+\begin{center}  % Center the table
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{18pt}  % Adjust the spacing between columns
+\large  % Adjust the font size for the table
+\begin{tabular}{|p{6cm}|c|c|c|r|}
+\hline
+\textbf{Description} & \textbf{Unit Price} & \textbf{Quantity} & \textbf{Tax (\%)} & \textbf{Amount} \\
+& & \textbf{(\$)} & & \textbf{(\$)} \\
+\cline{1-5}
+
+% Add products using the \product command
+\product{{Product1Name}}{{Product1Cost}}{{Product1Amount}}{10}
+\product{{Product2Name}}{{Product2Cost}}{{Product2Amount}}{10}
+\product{{Product3Name}}{{Product3Cost}}{{Product3Amount}}{10}
+
+% Add more products here using the \product command
+\hline
+\multicolumn{4}{|l|}{Subtotal} & {{SubTotal}} \\
+\multicolumn{4}{|l|}{Tax (15\%)} & {{TaxAmount}} \\
+\hline
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{{TotalAmount}} \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\textbf{Notes:} Thank you for your business! Please make the payment by the due date.
+
+\vspace{2cm}
+
+\begin{flushright}
+    \textbf{Due Date:} \dueDate
+\end{flushright}
