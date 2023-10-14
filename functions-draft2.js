@@ -1,11 +1,17 @@
 require("dotenv").config();
-//const admin = require("firebase-admin");
+const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue, Filter } = require('firebase-admin/firestore');
 const storage = require('@google-cloud/storage')();
 const latex = require("node-latex");
 const fs = require("fs");
 const nodemailer = require("nodemailer");
 //const sendGrid = require("sendGrid");
 const functions = require("firebase-functions");
+
+//initialize firestore for serverside cloud functions; dunno if necessary, functions tutorials don't use it, but whatever
+initializeApp();
+//initialize database constant    (commented out cause not used: references are made to specific documents on triggers)
+//const db = getFirestore();
 
 //save collection name and in / out buckets
 const collectionName = process.env.COLLECTION;
@@ -15,10 +21,10 @@ const outBucketName = process.env.OUTBUCKET;
 
 
 /*
-COLE UPDATE COMMENTS:
+PROGRAM MUST KNOWS:
 
 obviously code only currently works on documents that have the exact data as coleTest/97025378921
-either make doc same as that, or work on onUpdate so that doc can be used in demo
+either make doc same as that, or work on onUpdate so that doc can be used
 
 
 
@@ -32,26 +38,6 @@ we need this to run code locally since we need to certify our code is being run 
 but functions are being run by the project itself, and are assumed to be admin access
 (functions are uploaded if you log in through cloud sdk which ensures code is made by a project admin)
 also functions directory will not contain a serviceaccount key data file!!
-
-
-
-"Compile the LaTeX document"
-exec(`echo "${latex}" | pdflatex`, (error, stdout, stderr) => {
-  if (error) {
-    console.error("exec error: ${error}");
-    return;
-  }
-});
-
-this code runs echo in dir terminal instance- a windows equivalent to cat which prints file data to terminal
-
-
-
-
-"uses dotenv npm to hide credentials"
-
-can you? firestore holds the code after emulator launch, and idk how to save env file to firestore's directory
-related: commented require line, BUT DID NOT UPDATE EMAIL CODE, DUNO HOW IT WORKS
 
 
 
@@ -76,9 +62,6 @@ NEED more checks like this (from first if statement in onUpdate):
 
 
 
-
-// firestore collection function triggers page: https://cloud.google.com/firestore/docs/extend-with-functions
-
 // FIRESTORE DOC CREATION TRIGGER
 exports.createDoc = functions.firestore
   //{docId} DOES NOT NEED A '$', THIS IS A VARIABLE HANDLED BY CLOUD FUNCTIONS; docId IS THE DOC THAT IS CHANGED
@@ -88,6 +71,7 @@ exports.createDoc = functions.firestore
 
     const docRef = snap.ref();
     const data = snap.data();
+
 
 
     //EXPECTED NEW DOCS DO NOT PROCESS UNLESS STATE == 'CREATE'
@@ -107,6 +91,7 @@ exports.createDoc = functions.firestore
       }, function(err) {
         console.log(`Error downloading template: ${err}`);
       }); //use .then(function(){}) ?
+
 
       //kenny code to process, expects tex file exists in /tmp/ subdirectory; after done, pdf expected in /tmp/ subdirectory
       await fs.readFile(inFilePath, 'utf8', (err, originalData) => {
@@ -241,6 +226,8 @@ exports.createDoc = functions.firestore
     // change.before.data() gives data of the document before the update
     const previousData = change.before.data();
 
+
+
     //only triggers if state flag in firestore doc is modified to 'create'; ie the change/update is state updating
     if (data.state === "create" && previousData.state !== "create") {
       // prep storage bucket objects
@@ -258,6 +245,7 @@ exports.createDoc = functions.firestore
       }, function(err) {
         console.log(`Error downloading template: ${err}`);
       });
+
 
       //kenny code to process, expects tex file exists in /tmp/ subdirectory; after done, pdf expected in /tmp/ subdirectory
       await fs.readFile(inFilePath, 'utf8', (err, originalData) => {
@@ -312,6 +300,7 @@ exports.createDoc = functions.firestore
         console.error('Error getting document', error);
       });
 
+
       //upload finished pdf to processed bucket
       let uploading = await outBucket.upload(outFilePath);
       if (uploading.err) console.log(`Error uploading PDF: ${uploading.err}`);
@@ -322,6 +311,8 @@ exports.createDoc = functions.firestore
     } else {
       //state anything other than create; dunno what go here
     }
+
+
 
     //do not manually (through firestore writing) update docs' state to processed, unknown outcome
     if (data.state === "processed" && previousData.state !== "processed"){
