@@ -1,17 +1,19 @@
 require("dotenv").config();
-const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-const { getFirestore, Timestamp, FieldValue, Filter } = require('firebase-admin/firestore');
-const storage = require('@google-cloud/storage')();
+//const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+//const { getFirestore, Timestamp, FieldValue, Filter } = require('firebase-admin/firestore');
+//const admin = require('firebase-admin');
+const {Storage} = require('@google-cloud/storage');
+const storage = new Storage();
 const latex = require("node-latex");
 const fs = require("fs");
 const nodemailer = require("nodemailer");
 //const sendGrid = require("sendGrid");
 const functions = require("firebase-functions");
 
-//initialize firestore for serverside cloud functions; dunno if necessary, functions tutorials don't use it, but whatever
-initializeApp();
-//initialize database constant    (commented out cause not used: references are made to specific documents on triggers)
-//const db = getFirestore();
+//admin.initializeApp();
+/*const firestore = new Firestore({
+  projectId: process.env.GOOGLE_CLOUD_PROJECT,
+});*/
 
 //save collection name and in / out buckets
 const collectionName = process.env.COLLECTION;
@@ -69,7 +71,7 @@ exports.createDoc = functions.firestore
   //parameters snap and context are doc 'snapshot' and backend 'context' respectively
   .onCreate(async (snap, context) => {  //watch out, cloud functions often return promises
 
-    const docRef = snap.ref();
+    const docRef = snap.ref;
     const data = snap.data();
 
 
@@ -80,8 +82,8 @@ exports.createDoc = functions.firestore
       const inBucket = storage.bucket(inBucketName);
       const outBucket = storage.bucket(outBucketName);
       // local / temporary file paths
-      const inFilePath = `./tmp/${context.params.docId}.tex`;
-      const outFilePath = `./tmp/${context.params.docId}.pdf`;
+      const inFilePath = `./${context.params.docId}.tex`;
+      const outFilePath = `./${context.params.docId}.pdf`;
       // specify template file IN BUCKET using template data; TODO figure out error handling for file not exist
       const inFile = inBucket.file(`${data.template}.tex`); //TODO template should include file extension; currently hardcoded as .tex
 
@@ -182,7 +184,7 @@ exports.createDoc = functions.firestore
             {
               filename: `${context.params.docId}.pdf`,
               //path: `gs://pdf-json-buckets/${snap.id}.pdf`,
-              path: `./tmp/${context.params.docId}.pdf`,
+              path: `./${context.params.docId}.pdf`,
               contentType: "application/pdf"
             }
           ]
@@ -216,11 +218,10 @@ exports.createDoc = functions.firestore
 
 
   //FIRESTORE DOC UPDATE TRIGGER
-  exports.updateDoc = functions.firestore
-  .document(`${collectionName}/{docId}`)
+  exports.updateDoc = functions.firestore.document(`${collectionName}/{docId}`)
   .onUpdate(async (change, context) => {
 
-    const docRef = change.after.ref();
+    const docRef = change.after.ref;
     // change.after.data() gives data of the document after the update
     const data = change.after.data();
     // change.before.data() gives data of the document before the update
@@ -234,8 +235,8 @@ exports.createDoc = functions.firestore
       const inBucket = storage.bucket(inBucketName);
       const outBucket = storage.bucket(outBucketName);
       // local / temporary file paths
-      const inFilePath = `./tmp/${context.params.docId}.tex`;
-      const outFilePath = `./tmp/${context.params.docId}.pdf`;
+      const inFilePath = `./${context.params.docId}.tex`;
+      const outFilePath = `./${context.params.docId}.pdf`;
       // specify template file IN BUCKET using template data; TODO figure out error handling for file not exist
       const inFile = inBucket.file(`${data.template}.tex`); //TODO template should include file extension; currently hardcoded as .tex
 
@@ -336,7 +337,7 @@ exports.createDoc = functions.firestore
         attachments: [
           {
             filename: `${context.params.docId}.pdf`,
-            path: `./tmp/${context.params.docId}.pdf`,
+            path: `./${context.params.docId}.pdf`,
             contentType: "application/pdf"
           }
         ]
