@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[a4paper, margin=1in, left=0.5in]{geometry}  % Adjusted left margin
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{xltabular}
+
+% Change the font to Times New Roman
+\renewcommand{\familydefault}{ptm}
+
+\begin{document}
+\begin{minipage}{0.3\textwidth}
+    \includegraphics[width=2cm]{aasd.jpg}  % Replace with your logo
+\end{minipage}%
+\begin{minipage}{0.7\textwidth}
+    \begin{flushright}
+        \textbf{\LARGE Invoice}\\
+        \textbf{Invoice Number:} J5143-0831\\
+        \textbf{Invoice Date:} Aug 31, 2023\\
+        \textbf{Due Date:} Sep 30, 2023\\
+        \textbf{Reference:} Zurg 2.0
+    \end{flushright}
+\end{minipage}
+
+\vspace{1cm}
+
+\noindent
+\textbf{Bill To:}
+\textbf{Name:} Evil Inc\\
+\textbf{Phone:} N/A\\
+\textbf{Address:} N/A\\
+\textbf{Email:} N/A
+
+\vspace{1cm}
+
+\begin{center}  % Center the table
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{18pt}  % Adjust the spacing between columns
+\small  % Adjust the font size for the table
+\begin{xltabular}{\textwidth}{|L|X|X|X|X|}
+\hline
+\textbf{Description} & \textbf{Quantity} & \textbf{Unit Price (\$)} & \textbf{Tax (\%)} & \textbf{Amount (\$)} \\
+\cline{1-5}
+PCBA BBV-BC-105 Rev 1 & 1 & 419.58 & 7.25 & 419.58\\
+Flange Shaft Coupling Connector & 1 & 9.31 & 7.25 & 9.31\\
+Linear bearing set of 12 & 1 & 13.97 & 7.25 & 13.97\\
+5pc 304 stainless steel rod & 1 & 17.66 & 7.25 & 17.66\\
+Metal Mart & 1 & 233.57 & 7.25 & 233.57\\
+McMaster & 1 & 325.14 & 7.25 & 325.14\\
+Horace, Software Engineer 7/31 to 8/27/23 hours & 12.5 & 150 & Tax Exempt & 1875\\
+Jasper, Firmware Engineer 7/31 to 8/27/23 hours & 35.5 & 150 & Tax Exempt & 5325\\
+Flotsam, Electrical Engineer 7/31 to 8/27/23 hours & 7.5 & 150 & Tax Exempt & 1125\\
+lago, Mechanical Engineer 7/31 to 8/27/23 hours & 34.1 & 150 & Tax Exempt & 5115\\
+Smee, Mechanical Intern 7/31 to 8/27/23 hours & 3.5 & 85 & Tax Exempt & 297.5\\
+Time &amp; Materials &  &  &  & \\
+\hline
+\multicolumn{4}{|l|}{Subtotal} & 14756.73 \\
+\multicolumn{4}{|l|}{Tax (15\%)} & 73.89 \\
+\hline
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf14830.62 \\
+\hline
+\end{xltabular}
+\end{center}
+
+\vspace{1cm}
+
+\textbf{Notes:} Thank you for your business! Please make the payment by the due date.
+
+\vspace{2cm}
+
+\begin{flushright}
+    \textbf{Due Date:} Sep 30, 2023
+\end{flushright}
+
+\end{document}

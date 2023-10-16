@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[a4paper, margin=1in, left=0.5in]{geometry}  % Adjusted left margin
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{xltabular}
+
+% Change the font to Times New Roman
+\renewcommand{\familydefault}{ptm}
+
+\begin{document}
+\begin{minipage}{0.3\textwidth}
+    \includegraphics[width=2cm]{aasd.jpg}  % Replace with your logo
+\end{minipage}%
+\begin{minipage}{0.7\textwidth}
+    \begin{flushright}
+        \textbf{\LARGE Invoice}\\
+        \textbf{Invoice Number:} {{#if this.[Invoice Number]}}{{this.[Invoice Number]}}{{else}}N/A{{/if}}\\
+        \textbf{Invoice Date:} {{#if this.[Invoice Date]}}{{this.[Invoice Date]}}{{else}}N/A{{/if}}\\
+        \textbf{Due Date:} {{#if this.[Due Date]}}{{this.[Due Date]}}{{else}}N/A{{/if}}\\
+        \textbf{Reference:} {{#if Reference}}{{Reference}}{{else}}N/A{{/if}}
+    \end{flushright}
+\end{minipage}
+
+\vspace{1cm}
+
+\noindent
+\textbf{Bill To:}
+\textbf{Name:} {{#if Customer}}{{Customer}}{{else}}N/A{{/if}}\\
+\textbf{Phone:} {{#if this.[Customer Phone]}}{{this.[Customer Phone]}}{{else}}N/A{{/if}}\\
+\textbf{Address:} {{#if this.[Customer Address]}}{{this.[Customer Address]}}{{else}}N/A{{/if}}\\
+\textbf{Email:} {{#if this.[Customer Email]}}{{this.[Customer Email]}}{{else}}N/A{{/if}}
+
+\vspace{1cm}
+
+\begin{center}  % Center the table
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{18pt}  % Adjust the spacing between columns
+\small  % Adjust the font size for the table
+\begin{xltabular}{\textwidth}{|L|X|X|X|X|}
+\hline
+\textbf{Description} & \textbf{Quantity} & \textbf{Unit Price (\$)} & \textbf{Tax (\%)} & \textbf{Amount (\$)} \\
+\cline{1-5}
+{{#each lineItems}}
+{{this.Description}} & {{this.Quantity}} & {{this.[Unit Price]}} & {{this.Tax}} & {{this.[Amount USD]}}\\
+{{/each}}
+\hline
+\multicolumn{4}{|l|}{Subtotal} & {{#if Subtotal}}{{Subtotal}}{{else}}N/A{{/if}} \\
+\multicolumn{4}{|l|}{Tax (15\%)} & {{#if this.[Total Tax]}}{{this.[Total Tax]}}{{else}}N/A{{/if}} \\
+\hline
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{{#if this.[Total USD]}}{{this.[Total USD]}}{{else}}N/A{{/if}} \\
+\hline
+\end{xltabular}
+\end{center}
+
+\vspace{1cm}
+
+\textbf{Notes:} Thank you for your business! Please make the payment by the due date.
+
+\vspace{2cm}
+
+\begin{flushright}
+    \textbf{Due Date:} {{#if this.[Due Date]}}{{this.[Due Date]}}{{else}}N/A{{/if}}
+\end{flushright}
+
+\end{document}
