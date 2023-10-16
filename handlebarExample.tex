@@ -42,7 +42,7 @@
 \textbf{Description} & \textbf{Quantity} & \textbf{Unit Price (\$)} & \textbf{Tax (\%)} & \textbf{Amount (\$)} \\
 \cline{1-5}
 {{#each lineItems}}
-{{this.Description}} & {{this.Quantity}} & {{this.[Unit Price]}} & {{this.Tax}} & {{this.[Amount USD]}}\\
+{{this.[Description]}} & {{this.Quantity}} & {{this.[Unit Price]}} & {{this.Tax}} & {{this.[Amount USD]}}\\
 {{/each}}
 \hline
 \multicolumn{4}{|l|}{Subtotal} & {{#if Subtotal}}{{Subtotal}}{{else}}N/A{{/if}} \\
