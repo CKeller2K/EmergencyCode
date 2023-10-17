@@ -1,8 +1,17 @@
 currently "npm install"'d modules for my current working code -Cole
-  @Google-cloud/storage
-  pdfkit
-  firebase-admin
-  @google-cloud/firestore
-  latex
-  @sendgrid/mail
+
+
+@google-cloud/storage@7.1.0
+├── @sendgrid/mail@7.7.0
+├── dotenv@16.3.1
+├── firebase-admin@11.11.0
+├── node-latex@3.1.0
+├── nodemailer@6.9.6
+├── path@0.12.7
+├── pdf-forms@0.1.1
+├── pdf-lib@1.17.1
+├── pdf2json@3.0.4
+└── pdfkit@0.13.0
+
+
 your currently installed list can be found with the terminal command 'npm list'
