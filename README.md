@@ -89,6 +89,20 @@ Week 2:
 - make sure code is compatible with cloud functions
 
 
+#3 (10/17 - 10/31):
+Week 1:
+- More templates
+- Work on dynamically reading data into tables
+- Fix pageination + text wrapping (for both too many items and text being too long)
+  
+Week 2:
+- Error handling across the board
+- Update code to read metaData sub-map for... meta data
+  - Save in / out buckets there
+  - Save template extension
+  - Code options
+- Save each template's expected fields / variables in a list (in template? in firestore document?)
+
 
 
 
