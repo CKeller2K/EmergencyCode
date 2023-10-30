@@ -3,35 +3,36 @@
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{setspace}
+\usepackage{longtable}  % Added longtable package for tables spanning multiple pages
 
 % Change the font to Times New Roman
 \renewcommand{\familydefault}{ptm}
 
 % Define customer and company information
-\newcommand{\customerName}{John Doe}
-\newcommand{\customerPhone}{123-456-7890}
-\newcommand{\customerAddress}{1234 Elm St, City, Country}
-\newcommand{\customerEmail}{john.doe@example.com}
+\newcommand{\customerName}{{CustomerName}}
+\newcommand{\customerPhone}{{CustomerPhone}}
+\newcommand{\customerAddress}{{CustomerAddress}}
+\newcommand{\customerEmail}{{CustomerEmail}}
 
-\newcommand{\companyName}{Your Company Name}
-\newcommand{\companyAddress}{123 Company St, City, Country}
-\newcommand{\companyPhone}{987-654-3210}
-\newcommand{\companyEmail}{info@yourcompany.com}
+\newcommand{\companyName}{{CompanyName}}
+\newcommand{\companyPhone}{{CompanyPhone}}
+\newcommand{\companyAddress}{{CompanyAddress}}   
+\newcommand{\companyEmail}{{CompanyEmail}}
 
 % Define product information using a command
 \newcommand{\product}[4]{%
-    #1 & #2 & \$$#3$ & #4 & \$$#2 \times #3$ \\
+#1 & #2 & \$$#3$ & #4 & \$$#2 \times #3$ \\
 }
 
-\newcommand{\invoiceNumber}{12345567}
-\newcommand{\invoiceDate}{\today}
-\newcommand{\dueDate}{\today}
-\newcommand{\reference}{ABC123}
+\newcommand{\invoiceNumber}{{InvoiceNumber}}
+\newcommand{\invoiceDate}{{\today}}
+\newcommand{\dueDate}{{\today}}
+\newcommand{\reference}{{Reference}}
 
 \begin{document}
 \begin{minipage}[t]{0.25\textwidth}
     \vspace{0pt}
-    \includegraphics[width=3cm]{aasd.jpg}  % Adjusted logo width
+    % \includegraphics[width=3cm]{aasd.jpg}  % Adjusted logo width
     \companyAddress \\
     \companyPhone \\
     \companyEmail
@@ -60,30 +61,30 @@
 
 \textbf{Invoice Details:}
 
-\begin{center}  % Center the table
 \renewcommand{\arraystretch}{1.5}
-\setlength{\tabcolsep}{18pt}  % Adjust the spacing between columns
 \large  % Adjust the font size for the table
-\begin{tabular}{|p{6cm}|c|c|c|r|}
+
+% Use longtable instead of tabular to support multi-page tables
+\begin{longtable}{|p{6cm}|c|c|c|r|}
 \hline
-\textbf{Description} & \textbf{Quantity} & \textbf{Unit Price} & \textbf{Tax (\%)} & \textbf{Amount} \\
+\textbf{Description} & \textbf{Unit Price} & \textbf{Quantity} & \textbf{Tax (\%)} & \textbf{Amount} \\
 & & \textbf{(\$)} & & \textbf{(\$)} \\
-\cline{1-5}
+\endhead % Header for subsequent pages
+\hline
 
 % Add products using the \product command
-\product{Product 1}{2}{50.00}{10}
-\product{Product 2}{1}{30.00}{5}
-\product{Product 3}{3}{25.00}{8}
-% Add more products here using the \product command
+\product{{Product1Name}}{{Product1Cost}}{{Product1Amount}}{10}
+\product{{Product2Name}}{{Product2Cost}}{{Product2Amount}}{10}
+\product{{Product3Name}}{{Product3Cost}}{{Product3Amount}}{10}
 
+% Add more products here using the \product command
 \hline
-\multicolumn{4}{|l|}{Subtotal} & 683.30 \\
-\multicolumn{4}{|l|}{Tax (15\%)} & 102.50 \\
+\multicolumn{4}{|l|}{Subtotal} & {{SubTotal}} \\
+\multicolumn{4}{|l|}{Tax (15\%)} & {{TaxAmount}} \\
 \hline
-\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{785.80} \\
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{{TotalAmount}} \\
 \hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \vspace{1cm}
 
