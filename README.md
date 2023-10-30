@@ -38,7 +38,7 @@ Project Outline:
 
 General Backlog:
 - ✔️ understand the project
-- ❌ split work accordingly
+- ✔️ split work accordingly
 - ✔️ learn github, nodejs, firebase, sendgrid, pdfkit
 - ✔️ create various test documents
 - create various test templates
