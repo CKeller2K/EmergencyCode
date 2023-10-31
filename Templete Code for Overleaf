@@ -1,14 +1,12 @@
 \documentclass{article}
-\usepackage[a4paper, margin=1in, left=0.5in]{geometry}  % Adjusted left margin
+\usepackage[a4paper, margin=0.75in]{geometry}
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{setspace}
-\usepackage{longtable}  % Added longtable package for tables spanning multiple pages
+\usepackage{longtable}
 
-% Change the font to Times New Roman
 \renewcommand{\familydefault}{ptm}
 
-% Define customer and company information
 \newcommand{\customerName}{{CustomerName}}
 \newcommand{\customerPhone}{{CustomerPhone}}
 \newcommand{\customerAddress}{{CustomerAddress}}
@@ -19,7 +17,6 @@
 \newcommand{\companyAddress}{{CompanyAddress}}   
 \newcommand{\companyEmail}{{CompanyEmail}}
 
-% Define product information using a command
 \newcommand{\product}[4]{%
 #1 & #2 & \$$#3$ & #4 & \$$#2 \times #3$ \\
 }
@@ -30,17 +27,31 @@
 \newcommand{\reference}{{Reference}}
 
 \begin{document}
-\begin{minipage}[t]{0.25\textwidth}
-    \vspace{0pt}
-    % \includegraphics[width=3cm]{aasd.jpg}  % Adjusted logo width
+
+\noindent
+\begin{minipage}[t]{0.5\textwidth}
+    \hspace{-0.5cm}
+    \includegraphics[width=3.5cm]{logo.png}
+    
+    \vspace{0.3cm}
+    
+    \textbf{\companyName} \\
     \companyAddress \\
     \companyPhone \\
-    \companyEmail
+    \companyEmail \\
+    
+    \vspace{0.2cm}
+    \textbf{Bill To:}\\
+    \textbf{Name:} \customerName \\
+    \textbf{Phone:} \customerPhone \\
+    \textbf{Address:} \customerAddress \\
+    \textbf{Email:} \customerEmail
 \end{minipage}%
-\begin{minipage}[t]{0.75\textwidth}
-    \vspace{0pt}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
     \begin{flushright}
-        \textbf{\LARGE Invoice}\\[10pt] % Adjusted size
+    \vspace{-3.0cm}
+        \textbf{\LARGE Invoice}\\[10pt]
         \textbf{Invoice Number:} \invoiceNumber \\
         \textbf{Invoice Date:} \invoiceDate \\
         \textbf{Due Date:} \dueDate \\
@@ -50,34 +61,21 @@
 
 \vspace{1cm}
 
+\renewcommand{\arraystretch}{1.2}
+\small
+
 \noindent
-\textbf{Bill To:}\\
-\textbf{Name:} \customerName \\
-\textbf{Phone:} \customerPhone \\
-\textbf{Address:} \customerAddress \\
-\textbf{Email:} \customerEmail
-
-\vspace{1cm}
-
-\textbf{Invoice Details:}
-
-\renewcommand{\arraystretch}{1.5}
-\large  % Adjust the font size for the table
-
-% Use longtable instead of tabular to support multi-page tables
-\begin{longtable}{|p{6cm}|c|c|c|r|}
+\begin{longtable}{|p{4.4cm}|c|c|c|r|}
 \hline
 \textbf{Description} & \textbf{Unit Price} & \textbf{Quantity} & \textbf{Tax (\%)} & \textbf{Amount} \\
 & & \textbf{(\$)} & & \textbf{(\$)} \\
-\endhead % Header for subsequent pages
+\endhead 
 \hline
 
-% Add products using the \product command
 \product{{Product1Name}}{{Product1Cost}}{{Product1Amount}}{10}
 \product{{Product2Name}}{{Product2Cost}}{{Product2Amount}}{10}
 \product{{Product3Name}}{{Product3Cost}}{{Product3Amount}}{10}
 
-% Add more products here using the \product command
 \hline
 \multicolumn{4}{|l|}{Subtotal} & {{SubTotal}} \\
 \multicolumn{4}{|l|}{Tax (15\%)} & {{TaxAmount}} \\
@@ -88,11 +86,14 @@
 
 \vspace{1cm}
 
+\noindent
 \textbf{Notes:} Thank you for your business! Please make the payment by the due date.
 
-\vspace{2cm}
+\vspace{1cm}
 
 \begin{flushright}
     \textbf{Due Date:} \dueDate
 \end{flushright}
 \end{document}
+
+
