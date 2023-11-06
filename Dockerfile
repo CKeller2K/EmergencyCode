@@ -6,6 +6,7 @@ WORKDIR /app
 
 COPY . .
 
+ENV HOST=0.0.0.0
 # Install dependencies
 RUN npm install
 
