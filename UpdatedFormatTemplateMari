@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage[a4paper, margin=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{longtable}
+\usepackage{graphicx}
+
+\renewcommand{\familydefault}{ptm}
+
+\newcommand{\customerName}{{CustomerName}}
+\newcommand{\customerPhone}{{CustomerPhone}}
+\newcommand{\customerAddress}{{CustomerAddress}}
+\newcommand{\customerEmail}{{CustomerEmail}}
+
+\newcommand{\companyName}{{CompanyName}}
+\newcommand{\companyPhone}{{CompanyPhone}}
+\newcommand{\companyAddress}{{CompanyAddress}}
+\newcommand{\companyEmail}{{CompanyEmail}}
+
+\newcommand{\product}[4]{%
+    #1 & #2 & \$$#3$ & #4 & \$$#2 \times #3$ \\
+}
+
+\newcommand{\invoiceNumber}{{InvoiceNumber}}
+\newcommand{\invoiceDate}{{\today}}
+\newcommand{\dueDate}{{\today}}
+\newcommand{\reference}{{Reference}}
+
+\begin{document}
+
+\noindent
+\begin{minipage}[t]{0.5\textwidth}
+    \hspace{-0.5cm}
+    \includegraphics[width=3.5cm]{logo.png}
+    
+    \vspace{0.3cm}
+    
+    \textbf{\companyName} \\
+    \companyAddress \\
+    \companyPhone \\
+    \companyEmail \\
+    
+    \vspace{0.2cm}
+    \textbf{Bill To:}\\
+    \textbf{Name:} \customerName \\
+    \textbf{Phone:} \customerPhone \\
+    \textbf{Address:} \customerAddress \\
+    \textbf{Email:} \customerEmail
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \begin{flushright}
+        \vspace{-3.0cm}
+        \textbf{\LARGE Invoice}\\[10pt]
+        \textbf{Invoice Number:} \invoiceNumber \\
+        \textbf{Invoice Date:} \invoiceDate \\
+        \textbf{Due Date:} \dueDate \\
+        \textbf{Reference:} \reference
+    \end{flushright}
+\end{minipage}
+
+\vspace{1cm}
+
+\renewcommand{\arraystretch}{1.2}
+\small
+
+\noindent
+\begin{longtable}{|p{4.4cm}|c|c|c|r|}
+\hline
+\textbf{Description} & \textbf{Unit Price} & \textbf{Quantity} & \textbf{Tax (\%)} & \textbf{Amount} \\
+& & \textbf{(\$)} & & \textbf{(\$)} \\
+\hline
+\endfirsthead
+\hline
+\endhead 
+
+\hline
+\multicolumn{4}{|l|}{Subtotal} & {{SubTotal}} \\
+\multicolumn{4}{|l|}{Tax (15\%)} & {{TaxAmount}} \\
+\hline
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{{TotalAmount}} \\
+\hline
+\end{longtable}
+
+\vspace{0.5cm}
+
+\noindent
+\textbf{Notes:} Thank you for your business! Please make the payment by the due date.
+
+\vspace{0.5cm}
+
+\begin{flushright}
+    \textbf{Due Date:} \dueDate
+\end{flushright}
+
+\end{document}
