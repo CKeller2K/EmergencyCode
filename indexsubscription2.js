@@ -24,6 +24,7 @@ const subscription = pubsub.subscription(process.env.PUBSUB);
 
 sendGrid.setApiKey(process.env.SENDGRIDKEY);
 
+//TODO COMMENT OUT LINE BELOW (+its closing parenthases) BEFORE DEPLOY TO RUN!! EXISTS FOR LOCAL TESTING
 subscription.on('message', async (message) => {
     const docID = Buffer.from(message.data, 'base64').toString('utf-8');
     const collectionRef = db.collection(`${process.env.COLLECTION}`);
@@ -177,17 +178,27 @@ subscription.on('message', async (message) => {
     }).then(() => {
       errorBool = false;
   });*/
-  if (errorBool) //TODO big error here. returns for the .on(finish) of original read. return does not end doc execution
-  return docRef.update({'metaData.state': "ERROR",
+    if (errorBool) //TODO big error here. returns for the .on(finish) of original read. return does not end doc execution
+    return docRef.update({'metaData.state': "ERROR",
   'metaData.ERROR': `Error: Failed reading PDF to Base-64: ${outFilePath}`,
   'metaData.timeError': admin.firestore.FieldValue.serverTimestamp()});
-  else console.log('No error reading download. Modifying...');
+    else console.log('No error reading download. Modifying...');
+
+    var emailSubject;
+    if (metaData.hasOwnProperty('emailSubject')) emailSubject = metaData.emailSubject;
+    else emailSubject = process.env.EMAILSUBJECTDEFAULT;
+
+    var emailContent;
+    if (metaData.hasOwnProperty('emailContent')) emailContent = metaData.emailContent;
+    else emailContent = process.env.EMAILCONTENTDEFAULT;
+
+    //TODO: for email in metaData.emails: to: email
 
     const message = {
-      to: process.env.EMAIL,
-      from: 'CSC131.emergency.code@gmail.com',
-      subject: 'PDF Generated',
-      text: 'Check PDF is attached. Do not reply to this email.',
+      to: process.env.TOEMAIL,
+      from: process.env.FROMEMAIL,
+      subject: emailSubject,
+      text: emailContent,
       attachments: [
         {
           filename: outFilePath,

@@ -58,7 +58,7 @@ exports.pubsub = functions.firestore
     */
 
     const docID = context.params.docId;
-    const message = Buffer.from(docID, 'utf-8');
+    const message = Buffer.from(docID, 'base64');
     //const attributes = //attributes here lol
 
     const messageID = await pubsub
