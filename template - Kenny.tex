@@ -3,86 +3,54 @@
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{setspace}
+\usepackage{xltabular}
 
 % Change the font to Times New Roman
 \renewcommand{\familydefault}{ptm}
 
-% Define customer and company information
-\newcommand{\customerName}{<<customerName>>}
-\newcommand{\customerPhone}{<<customerPhone>>}
-\newcommand{\customerAddress}{<<customerAddress>>}
-\newcommand{\customerEmail}{<<customerEmail>>}
-
-\newcommand{\companyName}{<<companyName>>}
-\newcommand{\companyPhone}{<<companyPhone>>}
-\newcommand{\companyAddress}{<<companyAddress>>}   
-\newcommand{\companyEmail}{<<companyEmail>>}
-
-% Define product information using a command
-\newcommand{\product}[4]{%
-#1 & #2 & \$$#3$ & #4 & \$$#2 \times #3$ \\
-}
-
-\newcommand{\invoiceNumber}{<<invoiceNumber>>}
-\newcommand{\invoiceDate}{\today}
-\newcommand{\dueDate}{\today}
-\newcommand{\reference}{ABC123}
-
 \begin{document}
-\begin{minipage}[t]{0.25\textwidth}
-    \vspace{0pt}
- %   \includegraphics[width=3cm]{aasd.jpg}  % Adjusted logo width
-    \companyAddress \\
-    \companyPhone \\
-    \companyEmail
+\begin{minipage}{0.3\textwidth}
+    \includegraphics[width=2cm]{aasd.jpg}  % Replace with your logo
 \end{minipage}%
-\begin{minipage}[t]{0.75\textwidth}
-    \vspace{0pt}
+\begin{minipage}{0.7\textwidth}
     \begin{flushright}
-        \textbf{\LARGE Invoice}\\[10pt] % Adjusted size
-        \textbf{Invoice Number:} \invoiceNumber \\
-        \textbf{Invoice Date:} \invoiceDate \\
-        \textbf{Due Date:} \dueDate \\
-        \textbf{Reference:} \reference
+        \textbf{\LARGE Invoice}\\
+        \textbf{Invoice Number:} {{#if this.[Invoice Number]}}{{this.[Invoice Number]}}{{else}}N/A{{/if}}\\
+        \textbf{Invoice Date:} {{#if this.[Invoice Date]}}{{this.[Invoice Date]}}{{else}}N/A{{/if}}\\
+        \textbf{Due Date:} {{#if this.[Due Date]}}{{this.[Due Date]}}{{else}}N/A{{/if}}\\
+        \textbf{Reference:} {{#if Reference}}{{Reference}}{{else}}N/A{{/if}}
     \end{flushright}
 \end{minipage}
 
 \vspace{1cm}
 
 \noindent
-\textbf{Bill To:}\\
-\textbf{Name:} \customerName \\
-\textbf{Phone:} \customerPhone \\
-\textbf{Address:} \customerAddress \\
-\textbf{Email:} \customerEmail
+\textbf{Bill To:}
+\textbf{Name:} {{#if Customer}}{{Customer}}{{else}}N/A{{/if}}\\
+\textbf{Phone:} {{#if this.[Customer Phone]}}{{this.[Customer Phone]}}{{else}}N/A{{/if}}\\
+\textbf{Address:} {{#if this.[Customer Address]}}{{this.[Customer Address]}}{{else}}N/A{{/if}}\\
+\textbf{Email:} {{#if this.[Customer Email]}}{{this.[Customer Email]}}{{else}}N/A{{/if}}
 
 \vspace{1cm}
-
-\textbf{Invoice Details:}
 
 \begin{center}  % Center the table
 \renewcommand{\arraystretch}{1.5}
 \setlength{\tabcolsep}{18pt}  % Adjust the spacing between columns
-\large  % Adjust the font size for the table
-\begin{tabular}{|p{6cm}|c|c|c|r|}
+\small  % Adjust the font size for the table
+\begin{xltabular}{\textwidth}{||p{0.3\textwidth}|X|X|X|X|}
 \hline
-\textbf{Description} & \textbf{Unit Price} & \textbf{Quantity} & \textbf{Tax (\%)} & \textbf{Amount} \\
-& & \textbf{(\$)} & & \textbf{(\$)} \\
+\textbf{Description} & \textbf{Quantity} & \textbf{Unit Price (\$)} & \textbf{Tax (\%)} & \textbf{Amount (\$)} \\
 \cline{1-5}
-
-% Add products using the \product command
-\product{<<product1Name>>}{<<product1Cost>>}{<<product1Amount>>}{10}
-\product{<<product2Name>>}{<<product2Cost>>}{<<product2Amount>>}{10}
-\product{<<product3Name>>}{<<product3Cost>>}{<<product3Amount>>}{10}
-
-% Add more products here using the \product command
+{{#each lineItems}}
+{{this.Description}} & {{this.Quantity}} & {{this.[Unit Price]}} & {{this.Tax}} & {{this.[Amount USD]}}\\
+{{/each}}
 \hline
-\multicolumn{4}{|l|}{Subtotal} & <<subTotal>> \\
-\multicolumn{4}{|l|}{Tax (15\%)} & <<taxAmount>> \\
+\multicolumn{4}{|l|}{Subtotal} & {{#if Subtotal}}{{Subtotal}}{{else}}N/A{{/if}} \\
+\multicolumn{4}{|l|}{Tax (15\%)} & {{#if this.[Total Tax]}}{{this.[Total Tax]}}{{else}}N/A{{/if}} \\
 \hline
-\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{<<totalAmount>>} \\
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & \textbf{{#if this.[Total USD]}}{{this.[Total USD]}}{{else}}N/A{{/if}} \\
 \hline
-\end{tabular}
+\end{xltabular}
 \end{center}
 
 \vspace{1cm}
@@ -92,6 +60,7 @@
 \vspace{2cm}
 
 \begin{flushright}
-    \textbf{Due Date:} \dueDate
+    \textbf{Due Date:} {{#if this.[Due Date]}}{{this.[Due Date]}}{{else}}N/A{{/if}}
 \end{flushright}
+
 \end{document}
