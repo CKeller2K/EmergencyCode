@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage[a4paper, margin=1in, left=0.5in]{geometry}  % Adjusted left margin
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{xltabular}
+
+% Change the font to Times New Roman
+\renewcommand{\familydefault}{ptm}
+
+\begin{document}
+\begin{minipage}[t]{0.25\textwidth}
+    \vspace{0pt}
+    \includegraphics[width=3cm]{aasd.jpg}\\  % Adjusted logo width
+    \textbf{Company Address:} {{#if this.[host_location]}}{{this.[host_location]}}{{else}}N/A{{/if}}\\
+    \textbf{Company Phone:} {{#if this.[host_phone]}}{{this.[host_phone]}}{{else}}N/A{{/if}}\\
+    \textbf{Company Email:} {{#if this.[host_email]}}{{this.[host_email]}}{{else}}N/A{{/if}}
+\end{minipage}% comment necessary? leaving here
+\begin{minipage}[t]{0.75\textwidth}
+    \vspace{0pt}
+    \begin{flushright}
+        \textbf{\LARGE Invoice}\\[10pt] % Adjusted size
+        \textbf{Invoice Number:} {{#if this.[document_id]}}{{this.[document_id]}}{{else}}N/A{{/if}} \\
+        \textbf{Invoice Date:} {{#if this.[date]}}{{this.[date]}}{{else}}N/A{{/if}} \\
+        \textbf{Due Date:} {{#if this.[date]}}{{this.[date]}}{{else}}N/A{{/if}} \\% lmao only 1 date in doc
+        \textbf{Reference:} {{#if this.[host_name]}}{{this.[host_name]}}{{else}}N/A{{/if}}
+    \end{flushright}
+\end{minipage}
+
+\vspace{1cm}
+
+\noindent
+\textbf{Bill To:}\\
+\textbf{Name:} {{#if this.[client_name]}}{{this.[client_name]}}{{else}}N/A{{/if}} \\
+\textbf{Phone:} {{#if this.[client_phone]}}{{this.[client_phone]}}{{else}}N/A{{/if}} \\
+\textbf{Address:} {{#if this.[client_address]}}{{this.[client_address]}}{{else}}N/A{{/if}} \\
+\textbf{Email:} {{#if this.[client_email]}}{{this.[client_email]}}{{else}}N/A{{/if}}
+
+\vspace{1cm}
+
+\textbf{Invoice Details:}
+
+\begin{center}  % Center the table
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{18pt}  % Adjust the spacing between columns
+\large  % Adjust the font size for the table
+\begin{xltabular}{\textwidth}{|p{6cm}|c|c|c|r|}
+\hline
+\textbf{Description} & \textbf{Unit Price} & \textbf{Quantity} & \textbf{Tax (\%)} & \textbf{Amount} \\
+& & \textbf{(\$)} & & \textbf{(\$)} \\
+\cline{1-5}
+
+{{#each items}}
+{{this.[name]}} & {{this.cost}} & {{this.count}}{10}\\
+{{/each}}
+
+% Add more products here using the \product command
+\hline
+\multicolumn{4}{|l|}{Subtotal} & {{#if this.[order_subtotal]}}{{this.[order_subtotal]}}{{else}}N/A{{/if}} \\
+\multicolumn{4}{|l|}{Tax (8.25\%)} & {{#if this.[order_tax]}}{{this.[order_tax]}}{{else}}N/A{{/if}} \\
+\hline
+\multicolumn{4}{|l|}{\textbf{Total (USD)}} & {{#if this.[order_total]}}{{this.[order_total]}}{{else}}N/A{{/if}} \\
+\hline
+\end{xltabular}
+\end{center}
+
+\vspace{1cm}
+
+\textbf{Notes:} Thank you for your business! Please make the payment by the due date.
+
+\vspace{2cm}
+
+\begin{flushright}
+    \textbf{Due Date:} {{#if this.[date]}}{{this.[date]}}{{else}}N/A{{/if}}
+\end{flushright}
+\end{document}
