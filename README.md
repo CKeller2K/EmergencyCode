@@ -12,7 +12,7 @@ Deployment Brief:
 3. Google Cloud Run + Docker
    - Refer to DockerDocumentation.docx for compilation + deployment
    - Required for program deployment:
-     - demo5.js 
+     - RunIndex.js 
      - .env
      - ServiceAccountKey.json (access to Google Cloud Run project)
      - package.json (list of NPM packages: *NOT AUTOMATICALLY DOWNLOADED*)
