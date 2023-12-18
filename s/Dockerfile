@@ -20,4 +20,4 @@ RUN apt-get update && \
 EXPOSE 8080
 
 # Define the command to run the application
-CMD [ "node", "index.js" ]
+CMD [ "node", "RunIndex.js" ]
